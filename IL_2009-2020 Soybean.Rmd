@@ -1,0 +1,731 @@
+---
+title: "IL_2009-2020 Soybeans EDA"
+output:
+  html_document:
+    df_print: paged
+---
+```{r}
+library(xts)
+library(forecast)
+library(tseries)
+library(CausalImpact)
+library(TSA)
+library(Metrics)
+library(tidyverse)
+library(dplyr)
+```
+
+```{r}
+df <- read.csv("C:/Users/SAMSAS/Desktop/Uchi Courses/Barchart/IL_2009-2020.csv")
+```
+
+```{r}
+df_ts <- df
+df_ts$X <- format(as.Date(df_ts$X, "%m/%d/%Y"), "%Y-%m-%d")
+df_ts <- xts(df_ts[,-1], order.by = as.Date(df_ts$X))
+```
+
+## Compute correlation matrix
+```{r}
+library(corrplot)
+
+res <- cor(df_ts)
+corrplot(res, type = "upper", order = "hclust", 
+         tl.col = "black", tl.srt = 45)
+```
+# LST_day
+```{r}
+LST_day_ts <- df_ts$LST_day
+plot(LST_day_ts)
+```
+
+
+# ACF
+```{r}
+acf(LST_day_ts)
+```
+# PACF
+```{r}
+pacf(LST_day_ts)
+```
+# Dickey-Fuller
+```{r}
+adf.test(LST_day_ts)
+```
+Reject the null hypothesis that it is non-stationary
+
+# Decomposition
+```{r}
+LST_day_ts_yearly <- ts(LST_day_ts, frequency=45.6)
+plot(decompose(LST_day_ts_yearly))
+```
+# MA 10
+```{r}
+LST_day_ma <- ma(LST_day_ts_yearly, order = 10)
+plot(LST_day_ma)
+```
+# Holt-Winters
+```{r}
+LST_day_df_yearly <- cbind(df['X'], df['LST_day'])
+LST_day_df_yearly.ts <- ts(LST_day_df_yearly$LST_day, frequency = (46)) # Convert df to time series
+LST_day_df_yearly.hw <- HoltWinters(x=LST_day_df_yearly.ts) # Run HW
+plot(LST_day_df_yearly.hw)
+```
+# ARIMA
+```{r}
+LST_day_arima <- auto.arima(LST_day_df_yearly.ts, seasonal = TRUE)
+
+```
+
+```{r}
+LST_day_arima
+```
+
+
+# LST_night
+```{r}
+LST_night_ts <- df_ts$LST_night
+plot(LST_night_ts, col = "brown1")
+```
+
+```{r}
+
+```
+
+
+# ACF
+```{r}
+acf(LST_night_ts)
+```
+# PACF
+```{r}
+pacf(LST_night_ts)
+```
+# Dickey-Fuller
+```{r}
+adf.test(LST_night_ts)
+```
+Reject the null hypothesis that it is non-stationary
+
+# Decomposition
+```{r}
+LST_night_ts_yearly <- ts(LST_night_ts, frequency=45.6)
+plot(decompose(LST_night_ts_yearly))
+```
+# MA 10
+```{r}
+LST_night_ma <- ma(LST_night_ts_yearly, order = 10)
+plot(LST_night_ma)
+```
+# Holt-Winters
+```{r}
+LST_night_df_yearly <- cbind(df['X'], df['LST_night'])
+LST_night_df_yearly.ts <- ts(LST_night_df_yearly$LST_night, frequency = 45) # Convert df to time series
+LST_night_df_yearly.hw <- HoltWinters(x=LST_night_df_yearly.ts) # Run HW
+plot(LST_night_df_yearly.hw)
+```
+# ARIMA
+```{r}
+LST_night_arima <- auto.arima(LST_night_df_yearly.ts, seasonal = TRUE)
+LST_night_arima
+```
+```{r}
+plot(forecast(LST_night_arima))
+```
+
+
+## NDWI
+```{r}
+NDWI_ts <- df_ts$NDWI
+plot(NDWI_ts)
+```
+# ACF
+```{r}
+acf(NDWI_ts)
+```
+# PACF
+```{r}
+pacf(NDWI_ts)
+```
+# Dickey-Fuller
+```{r}
+adf.test(NDWI_ts)
+```
+Reject the null hypothesis that it is non-stationary
+
+# Decomposition
+```{r}
+NDWI_ts_yearly <- ts(NDWI_ts, frequency=45.6)
+plot(decompose(NDWI_ts_yearly))
+```
+# MA 10
+```{r}
+NDWI_ma <- ma(NDWI_ts_yearly, order = 10)
+plot(NDWI_ma)
+```
+# Holt-Winters
+```{r}
+NDWI_df_yearly <- cbind(df['X'], df['NDWI'])
+NDWI_df_yearly.ts <- ts(NDWI_df_yearly$NDWI, frequency = 46) # Convert df to time series
+NDWI_df_yearly.hw <- HoltWinters(NDWI_df_yearly.ts) # Run HW
+plot(NDWI_df_yearly.hw)
+```
+# ARIMA
+```{r}
+NDWI_arima <- auto.arima(NDWI_df_yearly.ts, seasonal = TRUE)
+NDWI_arima
+```
+
+
+```{r}
+plot(forecast(NDWI_arima))
+```
+
+## NDVI
+```{r}
+NDVI_ts <- df_ts$NDVI
+plot(NDVI_ts)
+```
+# ACF
+```{r}
+acf(NDVI_ts)
+```
+# PACF
+```{r}
+pacf(NDVI_ts)
+```
+# Dickey-Fuller
+```{r}
+adf.test(NDVI_ts)
+```
+Reject the null hypothesis that it is non-stationary
+
+# Decomposition
+```{r}
+NDVI_ts_yearly <- ts(NDVI_ts, frequency=45.6)
+plot(decompose(NDVI_ts_yearly))
+```
+# MA 10
+```{r}
+NDVI_ma <- ma(NDVI_ts_yearly, order = 10)
+plot(NDVI_ma)
+```
+# Holt-Winters
+```{r}
+NDVI_df_yearly <- cbind(df['X'], df['NDVI'])
+NDVI_df_yearly.ts <- ts(NDVI_df_yearly$NDVI, frequency = 46) # Convert df to time series
+NDVI_df_yearly.hw <- HoltWinters(x=NDVI_df_yearly.ts) # Run HW
+plot(NDVI_df_yearly.hw)
+```
+# ARIMA
+```{r}
+NDVI_arima <- auto.arima(NDVI_df_yearly.ts, seasonal = TRUE)
+NDVI_arima
+```
+
+```{r}
+plot(forecast(NDVI_arima),h=46)
+```
+
+
+## TMAX
+```{r}
+TMAX_ts <- df_ts$TMAX
+plot(TMAX_ts)
+```
+# ACF
+```{r}
+acf(TMAX_ts)
+```
+# PACF
+```{r}
+pacf(TMAX_ts)
+```
+# Dickey-Fuller
+```{r}
+adf.test(TMAX_ts)
+```
+Reject the null hypothesis that it is non-stationary
+
+# Decomposition
+```{r}
+TMAX_ts_yearly <- ts(TMAX_ts, frequency=45.6)
+plot(decompose(TMAX_ts_yearly))
+```
+# MA 10
+```{r}
+TMAX_ma <- ma(TMAX_ts_yearly, order = 10)
+plot(TMAX_ma)
+```
+# Holt-Winters
+```{r}
+TMAX_df_yearly <- cbind(df['X'], df['TMAX'])
+TMAX_df_yearly.ts <- ts(TMAX_df_yearly$TMAX, frequency = 45) # Convert df to time series
+TMAX_df_yearly.hw <- HoltWinters(x=TMAX_df_yearly.ts) # Run HW
+plot(TMAX_df_yearly.hw)
+```
+# ARIMA
+```{r}
+TMAX_arima <- auto.arima(TMAX_df_yearly.ts, seasonal = TRUE)
+TMAX_arima
+```
+```{r}
+plot(forecast(TMAX_arima))
+```
+
+## TMIN
+```{r}
+TMIN_ts <- df_ts$TMIN
+plot(TMIN_ts)
+```
+# ACF
+```{r}
+acf(TMIN_ts)
+```
+# PACF
+```{r}
+pacf(TMIN_ts)
+```
+# Dickey-Fuller
+```{r}
+adf.test(TMIN_ts)
+```
+Reject the null hypothesis that it is non-stationary
+
+# Decomposition
+```{r}
+TMIN_ts_yearly <- ts(TMIN_ts, frequency=45.6)
+plot(decompose(TMIN_ts_yearly))
+```
+# MA 10
+```{r}
+TMIN_ma <- ma(TMIN_ts_yearly, order = 10)
+plot(TMIN_ma)
+```
+# Holt-Winters
+```{r}
+TMIN_df_yearly <- cbind(df['X'], df['TMIN'])
+TMIN_df_yearly.ts <- ts(TMIN_df_yearly$TMIN, frequency = 45) # Convert df to time series
+TMIN_df_yearly.hw <- HoltWinters(x=TMIN_df_yearly.ts) # Run HW
+plot(TMIN_df_yearly.hw)
+```
+# ARIMA
+```{r}
+TMIN_arima <- auto.arima(TMIN_df_yearly.ts, seasonal=TRUE)
+TMIN_arima
+```
+```{r}
+plot(forecast(TMIN_arima))
+```
+
+```{r}
+Omega(LST_day_df_yearly.ts, spectrum.control = list(method = "pgram"))
+```
+
+```{r}
+Omega(LST_night_df_yearly.ts, spectrum.control = list(method = "pgram"))
+```
+
+```{r}
+Omega(TMAX_df_yearly.ts, spectrum.control = list(method = "pgram"))
+```
+
+```{r}
+Omega(TMIN_df_yearly.ts, spectrum.control = list(method = "pgram"))
+```
+
+```{r}
+Omega(NDVI_df_yearly.ts, spectrum.control = list(method = "pgram"))
+```
+
+```{r}
+Omega(NDWI_df_yearly.ts, spectrum.control = list(method = "pgram"))
+```
+
+```{r}
+Omega(PRCP_df_yearly.ts, spectrum.control = list(method = "pgram"))
+```
+
+## PRCP
+```{r}
+PRCP_ts <- df_ts$PRCP
+plot(PRCP_ts)
+```
+# ACF
+```{r}
+acf(PRCP_ts)
+```
+# PACF
+```{r}
+pacf(PRCP_ts)
+```
+# Dickey-Fuller
+```{r}
+adf.test(PRCP_ts)
+```
+Reject the null hypothesis that it is non-stationary
+
+# Decomposition
+```{r}
+PRCP_ts_yearly <- ts(PRCP_ts, frequency=45.6)
+plot(decompose(PRCP_ts_yearly))
+```
+# MA 10
+```{r}
+PRCP_ma <- ma(PRCP_ts_yearly, order = 10)
+plot(PRCP_ma)
+```
+# Holt-Winters
+```{r}
+PRCP_df_yearly <- cbind(df['X'], df['PRCP'])
+PRCP_df_yearly.ts <- ts(PRCP_df_yearly$PRCP, frequency = 45) # Convert df to time series
+PRCP_df_yearly.hw <- HoltWinters(x=PRCP_df_yearly.ts) # Run HW
+plot(PRCP_df_yearly.hw)
+```
+# ARIMA
+```{r}
+PRCP_arima <- auto.arima(PRCP_df_yearly.ts, seasonal = TRUE)
+PRCP_arima
+```
+```{r}
+plot(forecast(PRCP_arima))
+```
+```{r}
+plot(forecast(PRCP_df_yearly.hw))
+```
+
+```{r}
+plot(LST_day_ts, col = "brown1")
+lines(LST_night_ts, col = "deepskyblue")
+```
+
+```{r}
+plot(TMAX_ts, col = "brown1")
+lines(TMIN_ts, col = "deepskyblue")
+```
+
+```{r}
+plot(forecast(LST_day_df_yearly.hw))
+```
+```{r}
+plot(forecast(LST_night_df_yearly.hw))
+```
+```{r}
+plot(forecast(TMAX_df_yearly.hw))
+```
+```{r}
+plot(forecast(TMIN_df_yearly.hw))
+```
+```{r}
+plot(forecast(NDWI_df_yearly.hw))
+```
+```{r}
+plot(forecast(NDVI_df_yearly.hw))
+```
+```{r}
+LST_day_arima1 <- auto.arima(LST_day_ts)
+plot(forecast(LST_day_arima1,h = 46))
+```
+```{r}
+periodogram(LST_day_ts,ylab='LST_day_ts Periodogram')
+```
+```{r}
+periodogram(LST_night_ts,ylab='LST_night_ts Periodogram')
+```
+```{r}
+periodogram(TMAX_ts,ylab='TMAX_ts Periodogram')
+```
+```{r}
+periodogram(TMIN_ts,ylab='TMIN_ts Periodogram')
+```
+
+```{r}
+p_ndwi <- periodogram(NDWI_ts,ylab='NDWI_ts Periodogram')
+```
+```{r}
+dd = data.frame(freq=p_ndwi$freq, spec=p_ndwi$spec)
+order = dd[order(-dd$spec),]
+top2 = head(order, 2)
+ 
+# display the 2 highest "power" frequencies
+top2$period <- 1/top2$freq 
+
+top2
+```
+
+```{r}
+ndwi_temp <- msts(NDWI_ts, seasonal.periods=c(44, 23))
+model_ndwi <- tbats(ndwi_temp)
+comp <- tbats.components(model_ndwi)
+plot(comp)
+```
+```{r}
+plot(forecast(model_ndwi))
+```
+
+
+```{r}
+p_ndvi <- periodogram(NDVI_ts,ylab='NDVI_ts Periodogram')
+```
+```{r}
+dd = data.frame(freq=p_ndvi$freq, spec=p_ndvi$spec)
+order = dd[order(-dd$spec),]
+top2 = head(order, 2)
+ 
+# display the 2 highest "power" frequencies
+top2$period <- 1/top2$freq 
+
+top2
+```
+
+```{r}
+ndvi_temp <- msts(NDVI_ts, seasonal.periods=c(44, 48))
+model_ndvi <- tbats(ndvi_temp)
+comp <- tbats.components(model_ndvi)
+plot(comp)
+```
+```{r}
+plot(forecast(model_ndvi))
+```
+
+```{r}
+p_PRCP <- periodogram(PRCP_ts,ylab='NDWI_ts Periodogram')
+```
+
+```{r}
+dynamic_reg_Fourier_Arima <- auto.arima(NDWI_df_yearly.ts,xreg = fourier(ts(NDWI_df_yearly.ts,frequency = 45),K=2))
+summary(dynamic_reg_Fourier_Arima)
+```
+
+```{r}
+NDWI_fcast <- forecast(dynamic_reg_Fourier_Arima, xreg=fourier(NDWI_df_yearly.ts, K=2, 
+h=46))
+plot(NDWI_fcast)
+```
+
+```{r}
+dynamic_reg_Fourier_Arima2 <- auto.arima(NDVI_df_yearly.ts,xreg = fourier(ts(NDVI_df_yearly.ts,frequency = 46),K=2))
+summary(dynamic_reg_Fourier_Arima2)
+```
+
+```{r}
+NDVI_fcast <- forecast(dynamic_reg_Fourier_Arima2, xreg=fourier(NDVI_df_yearly.ts, K=2, 
+h=46))
+plot(NDVI_fcast)
+```
+
+## sMAPE comparison
+
+```{r}
+df_yield <- read.csv('C:/Users/SAMSAS/Desktop/Uchi Courses/Time Series/IL_soybean_2009_2021.csv')
+
+df_features <- read.csv('C:/Users/SAMSAS/Desktop/Uchi Courses/Time Series/IL_2009-2021.csv')
+```
+
+```{r}
+df_features_2021 <- xts(df_features[,-1], order.by = as.Date(df_features$X))
+
+df_features_2021 <- df_features_2021["2021-01-02
+/2021-12-28"]
+```
+
+```{r}
+LST_day_sarima_forecast <- forecast(LST_day_arima, h = 46)
+LST_night_sarima_forecast <- forecast(LST_night_arima, h = 46)
+TMAX_sarima_forecast <- forecast(TMAX_arima, h = 46)
+TMIN_sarima_forecast <- forecast(TMIN_arima, h = 46)
+NDWI_sarima_forecast <- forecast(NDWI_arima, h = 46)
+NDVI_sarima_forecast <- forecast(NDVI_arima, h = 46)
+PRCP_sarima_forecast <- forecast(PRCP_arima, h = 46)
+```
+
+```{r}
+
+LST_day_hw_forecast <- forecast(LST_day_df_yearly.hw, h = 46)
+LST_night_hw_forecast <- forecast(LST_night_df_yearly.hw, h = 46)
+TMAX_hw_forecast <- forecast(TMAX_df_yearly.hw, h = 46)
+TMIN_hw_forecast <- forecast(TMIN_df_yearly.hw, h = 46)
+NDWI_hw_forecast <- forecast(NDWI_df_yearly.hw, h = 46)
+NDVI_hw_forecast <- forecast(NDVI_df_yearly.hw, h = 46)
+PRCP_hw_forecast <- forecast(PRCP_df_yearly.hw, h = 46)
+```
+
+```{r}
+LST_day_ms_forecast <- "NA"
+LST_night_ms_forecast <- "NA"
+TMAX_ms_forecast <- "NA"
+TMIN_ms_forecast <- "NA"
+NDWI_ms_forecast <- forecast(model_ndwi, h = 46)
+NDVI_ms_forecast <- forecast(model_ndvi, h = 46)
+PRCP_ms_forecast <- "NA"
+```
+
+```{r}
+LST_day_fourier_forecast <- "NA"
+LST_night_fourier_forecast <- "NA"
+TMAX_fourier_forecast <- "NA"
+TMIN_fourier_forecast <- "NA"
+NDWI_fourier_forecast <- forecast(NDWI_fcast, h = 46)
+NDVI_fourier_forecast <- forecast(NDVI_fcast, h = 46)
+PRCP_fourier_forecast <- "NA"
+```
+
+
+```{r}
+LST_day_sarima_smape <- rmse(df_features_2021$LST_day, LST_day_sarima_forecast$mean)
+LST_night_sarima_smape <- rmse(df_features_2021$LST_night, LST_night_sarima_forecast$mean)
+TMAX_sarima_smape <- rmse(df_features_2021$TMAX, TMAX_sarima_forecast$mean)
+TMIN_sarima_smape <- rmse(df_features_2021$TMIN, TMIN_sarima_forecast$mean)
+NDWI_sarima_smape <- rmse(df_features_2021$NDWI, NDWI_sarima_forecast$mean)
+NDVI_sarima_smape <- rmse(df_features_2021$NDVI, NDVI_sarima_forecast$mean)
+PRCP_sarima_smape <- rmse(df_features_2021$PRCP, PRCP_sarima_forecast$mean)
+```
+
+```{r}
+LST_day_hw_smape <- rmse(df_features_2021$LST_day, LST_day_hw_forecast$mean)
+LST_night_hw_smape <- rmse(df_features_2021$LST_night, LST_night_hw_forecast$mean)
+TMAX_hw_smape <- rmse(df_features_2021$TMAX, TMAX_hw_forecast$mean)
+TMIN_hw_smape <- rmse(df_features_2021$TMIN, TMIN_hw_forecast$mean)
+NDWI_hw_smape <- rmse(df_features_2021$NDWI, NDWI_hw_forecast$mean)
+NDVI_hw_smape <- rmse(df_features_2021$NDVI, NDVI_hw_forecast$mean)
+PRCP_hw_smape <- rmse(df_features_2021$PRCP, PRCP_hw_forecast$mean)
+```
+
+```{r}
+LST_day_ms_smape <- "NA"
+LST_night_ms_smape <- "NA"
+TMAX_ms_smape <- "NA"
+TMIN_ms_smape <- "NA"
+NDWI_ms_smape <- rmse(df_features_2021$NDWI, NDWI_ms_forecast$mean)
+NDVI_ms_smape <- rmse(df_features_2021$NDVI, NDVI_ms_forecast$mean)
+PRCP_ms_smape <- "NA"
+```
+
+```{r}
+LST_day_fourier_smape <- "NA"
+LST_night_fourier_smape <- "NA"
+TMAX_fourier_smape <- "NA"
+TMIN_fourier_smape <- "NA"
+NDWI_fourier_smape <- rmse(df_features_2021$NDVI, NDWI_fcast$mean)
+NDVI_fourier_smape <- rmse(df_features_2021$NDVI, NDVI_fcast$mean)
+PRCP_fourier_smape <- "NA"
+```
+
+```{r}
+LST_day <- c(LST_day_sarima_smape, LST_day_hw_smape, LST_day_ms_smape, LST_day_fourier_smape)
+LST_night <- c(LST_night_sarima_smape, LST_night_hw_smape, LST_night_ms_smape, LST_night_fourier_smape)
+TMAX <- c(TMAX_sarima_smape, TMAX_hw_smape, TMAX_ms_smape, TMAX_fourier_smape)
+TMIN <- c(TMIN_sarima_smape, TMIN_hw_smape, TMIN_ms_smape, TMIN_fourier_smape)
+NDWI <- c(NDWI_sarima_smape, NDWI_hw_smape, NDWI_ms_smape, NDWI_fourier_smape)
+NDVI <- c(NDVI_sarima_smape, NDVI_hw_smape, NDVI_ms_smape, NDVI_fourier_smape)
+PRCP <- c(PRCP_sarima_smape, PRCP_hw_smape, PRCP_ms_smape, PRCP_fourier_smape)
+```
+
+```{r}
+df_result <- data.frame(LST_day, LST_night, TMAX, TMIN, NDWI, NDVI, PRCP)
+rownames(df_result) <- c("SARIMA","Holt-Winter", "Multiple Seasonal", "Fourier Arima")
+```
+
+```{r}
+df_result
+```
+```{r}
+PRCP_2021 <- df_features_2021$PRCP
+PRCP_2021 <- ts(PRCP_2021, frequency = 1)
+plot(PRCP_2021, col="black")
+lines(PRCP_fcast, col="red")
+lines(ts(PRCP_sarima_forecast$mean, frequency = 1), col="blue")
+
+```
+```{r}
+PRCP_fcast <- PRCP_hw_forecast$mean
+PRCP_fcast <- as.data.frame(PRCP_fcast)
+plot(PRCP_fcast)
+```
+```{r}
+grep("actual_yield", colnames(df_2021))
+```
+```{r}
+growing_season <- df_2021[,122:199]
+growing_season <- scale(growing_season,center=TRUE,scale=TRUE)
+growing_season <- cbind(growing_season, df_2021$actual_yield)
+growing_season <- as.data.frame(growing_season)
+```
+
+```{r}
+result <- c()
+for (i in 1:77) {
+  fit <- lm(df_2021$actual_yield~growing_season[,i], data = growing_season)
+  result <- rbind(result, c(colnames(growing_season)[i], coef(summary(fit))[2,c(1,2)]))
+}
+```
+
+```{r}
+result <- as.data.frame(result)
+estimate <- as.numeric(result$Estimate)
+estimate
+```
+```{r}
+PRCP_sarima_forecast
+```
+
+```{r}
+LST_day_growing_season <- LST_day_sarima_forecast$mean[17:27]
+LST_night_growing_season <- LST_day_sarima_forecast$mean[17:27]
+NDWI_growing_season <- NDWI_sarima_forecast$mean[17:27]
+NDVI_growing_season <- NDVI_sarima_forecast$mean[17:27]
+TMAX_growing_season <- TMAX_sarima_forecast$mean[17:27]
+TMIN_growing_season <- TMIN_sarima_forecast$mean[17:27]
+PRCP_growing_season <- PRCP_sarima_forecast$mean[17:27]
+
+LST_day_growing_season <- scale(LST_day_growing_season,center=TRUE,scale=TRUE)
+LST_night_growing_season <- scale(LST_night_growing_season,center=TRUE,scale=TRUE)
+NDWI_growing_season <- scale(NDWI_growing_season,center=TRUE,scale=TRUE)
+NDVI_growing_season <- scale(NDVI_growing_season,center=TRUE,scale=TRUE)
+TMAX_growing_season <- scale(TMAX_growing_season,center=TRUE,scale=TRUE)
+TMIN_growing_season <- scale(TMIN_growing_season,center=TRUE,scale=TRUE)
+PRCP_growing_season <- scale(PRCP_growing_season,center=TRUE,scale=TRUE)
+
+repeat1 <- c()
+
+for (i in 1:11) {
+  repeat1 <- append(repeat1, LST_day_growing_season[i])
+  repeat1 <- append(repeat1, LST_night_growing_season[i])
+  repeat1 <- append(repeat1, NDWI_growing_season[i])
+  repeat1 <- append(repeat1, NDVI_growing_season[i])
+  repeat1 <- append(repeat1, TMAX_growing_season[i])
+  repeat1 <- append(repeat1, TMIN_growing_season[i])
+  repeat1 <- append(repeat1, PRCP_growing_season[i])
+}
+```
+
+```{r}
+repeat1
+```
+```{r}
+LST_day_sarima_forecast
+```
+
+```{r}
+predicted_result <- as.list(repeat1 * estimate)
+```
+
+```{r}
+yield <- 0
+for (i in predicted_result) {
+  yield = yield + i
+}
+
+yield
+```
+```{r}
+state_yield_2021 = df_2021 %>% group_by(year) %>% summarise_each(funs(Mean = mean))
+state_yield_2021 <- state_yield_2021[,ncol(state_yield_2021)-2]
+```
+
+```{r}
+state_yield_2021
+```
+
+
+
